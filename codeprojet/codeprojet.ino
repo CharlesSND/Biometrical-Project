@@ -64,13 +64,20 @@ void loop()                     // exécuté en boucle
   Serial.println("3 - Vérifier l'empreinte");
 
   int choice = readnumber();
-
-  if (choice == 1) {
-    enrollFingerprint();
-  } else if (choice == 2) {
-    deleteFingerprint();
-  } else if (choice == 3) {
-    verifyFingerprint();
+  
+  switch(choice){
+    case 1:
+      enrollFingerprint();
+      break;
+    case 2:
+      deleteFingerprint();
+      break;
+    case 3:
+      verifyFingerprint();
+      break;
+    default:
+      Serial.println("Mauvaise saisie"); // Gestion des erreurs
+    break;
   }
 }
 
@@ -93,14 +100,20 @@ void deleteFingerprint() {
   id = readnumber();
 
   int p = finger.deleteModel(id);
-  if (p == FINGERPRINT_OK) {
-    Serial.println("Empreinte supprimée !");
-  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-    Serial.println("Erreur de communication");
-  } else if (p == FINGERPRINT_BADLOCATION) {
-    Serial.println("Impossible de trouver une empreinte à cet emplacement");
-  } else {
-    Serial.println("Erreur inconnue");
+  
+  switch(p){
+    case FINGERPRINT_OK :
+      Serial.println("Empreinte supprimée !");
+      break;
+    case FINGERPRINT_PACKETRECIEVEERR :
+      Serial.println("Erreur de communication");
+      break;
+    case FINGERPRINT_BADLOCATION :
+      Serial.println("Impossible de trouver une empreinte à cet emplacement");
+      break;
+    default:
+      Serial.println("Erreur inconnue");
+      break;
   }
 }
 
@@ -178,18 +191,23 @@ uint8_t getFingerprintEnroll() {
     case FINGERPRINT_IMAGEMESS:
       Serial.println("Image trop floue");
       return p;
+      break;
     case FINGERPRINT_PACKETRECIEVEERR:
       Serial.println("Erreur de communication");
       return p;
+      break;
     case FINGERPRINT_FEATUREFAIL:
       Serial.println("Impossible de trouver les caractéristiques de l'empreinte");
       return p;
+      break;
     case FINGERPRINT_INVALIDIMAGE:
       Serial.println("Impossible de trouver les caractéristiques de l'empreinte");
       return p;
+      break;
     default:
       Serial.println("Erreur inconnue");
       return p;
+      break;
   }
 
   Serial.println("Retirez le doigt");
@@ -250,39 +268,47 @@ uint8_t getFingerprintEnroll() {
   Serial.print("Création du modèle pour #");  Serial.println(id);
 
   p = finger.createModel();
-  if (p == FINGERPRINT_OK) {
-    Serial.println("Empreintes correspondantes !");
-  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-    Serial.println("Erreur de communication");
-    return p;
-  } else if (p == FINGERPRINT_ENROLLMISMATCH) {
-    Serial.println("Les empreintes ne correspondent pas");
-    return p;
-  } else {
-    Serial.println("Erreur inconnue");
-    return p;
-  }
 
+  switch(p){
+    case FINGERPRINT_OK :
+      Serial.println("Empreintes correspondantes !");
+      break;
+    case FINGERPRINT_PACKETRECIEVEERR :
+      Serial.println("Erreur de communication");
+      return p;
+      break;
+    case FINGERPRINT_ENROLLMISMATCH :
+      Serial.println("Les empreintes ne correspondent pas");
+      return p;
+      break;
+    default:
+      Serial.println("Erreur inconnue");
+      return p;
+      break;
+    
+  }
+  
   Serial.print("ID "); Serial.println(id);
   p = finger.storeModel(id);
-  if (p == FINGERPRINT_OK) {
-    Serial.println("Enregistré !");
-  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-    Serial.println("Erreur de communication");
-    return p;
-  } else if (p == FINGERPRINT_BADLOCATION) {
-    Serial.println("Impossible de stocker à cet emplacement");
-    return p;
-  } else if (p == FINGERPRINT_FLASHERR) {
-    Serial.println("Erreur d'écriture sur la mémoire flash");
-    return p;
-  } else {
-    Serial.println("Erreur inconnue");
-    return p;
+  switch(p){
+    case FINGERPRINT_OK :
+      Serial.println("Enregistré !");
+      break;
+    case FINGERPRINT_PACKETRECIEVEERR :
+      Serial.println("Erreur de communication");
+      return p;
+      break;
+    case FINGERPRINT_BADLOCATION :
+      Serial.println("Impossible de stocker à cet emplacement");
+      return p;
+      break;
+    case FINGERPRINT_FLASHERR :
+      Serial.println("Erreur d'écriture sur la mémoire flash");
+      return p;
+    default:
+      Serial.println("Erreur inconnue");
+      return p;
+      break;
   }
-
   return true;
 }
-
-
-
